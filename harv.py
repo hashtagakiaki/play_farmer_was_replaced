@@ -1,0 +1,114 @@
+def harvest_bush(b,l):
+	flag = 0
+	for i in l:
+		if i == b:
+			flag = 1
+			break
+	if flag == 1:
+		if can_harvest():
+			harvest()
+		if get_ground_type() != Grounds.Grassland: 
+			till()
+def harvest_soil(a,b,l):
+	flag = 0
+	for i in l:
+		if i == b:
+			flag = 1
+			break
+	if flag == 1:
+		if can_harvest():
+			harvest()
+		if get_ground_type() != Grounds.Soil: 
+			till()
+		plant(a)
+		
+#移動
+def travel():
+	if get_pos_y() != get_world_size()-1:
+		move(North)
+	else:
+		move(North)
+		move(East)
+def travel_rev():
+	if get_pos_y() != 0:
+		move(South)
+	else:
+		move(South)
+		move(West)
+#移動時の他の処理はいったやつ
+def general_process():
+	if get_water() < 0.5:
+			use_item(Items.Water)
+	travel()
+def general_process_rev():
+	if get_water() < 0.5:
+			use_item(Items.Water)
+	travel_rev()
+#copy_drone用のgeneral
+def copy_general_process():
+	if get_water() < 0.6:
+			use_item(Items.Water)
+	move(North)
+#初期地点に戻る
+def back():
+	for i in range(get_pos_y()):
+		move(South)
+	for i in range(get_pos_x()):
+		move(West)
+
+#特定位置に行く
+def move_to(to_x,to_y):
+	now_x = get_pos_x()
+	now_y = get_pos_y()
+	if now_x < to_x:
+		for i in range(to_x - now_x):
+			move(East)
+	elif now_x > to_x:
+		for i in range(now_x - to_x):
+			move(West)
+	if now_y < to_y:
+		for i in range(to_y - now_y):
+			move(North)
+	elif now_y > to_y:
+		for i in range(now_y - to_y):
+			move(South)
+
+def turn_right(moved,num):
+	if num != 0:
+		if moved == East:
+			ans = South
+		elif moved == South:
+			ans = West
+		elif moved == West:
+			ans = North
+		else:
+			ans = East
+		return turn_right(ans, num-1) 
+	else:
+		return moved
+		
+#soilにする
+def to_soil():
+	for i in range(get_world_size()):
+		if get_ground_type() != Grounds.Soil:
+			till()
+		harvest()
+		move(North)
+#grasslandにする
+def to_grass():
+	for i in range(get_world_size()):
+		if get_ground_type() != Grounds.Grassland:
+			till()
+		harvest()
+		move(North)
+#汎用初期化
+def init(f):
+	back()
+	i = get_world_size()
+	while i >= 0:
+		if spawn_drone(f):
+			move(East)
+			i -= 1
+#デフォルト値として使う
+def ever_false():
+	return False 
