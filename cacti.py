@@ -1,5 +1,5 @@
 import harv
-def cacti_sort():
+def cacti_sort_copydrone():
 	for i in range(get_world_size()):
 		if get_entity_type() != Entities.Cactus:
 			plant(Entities.Cactus)
@@ -8,7 +8,7 @@ def cacti_sort():
 		if measure(East) != None and measure() != None and measure() > measure(East) and get_pos_x() != get_world_size() - 1:
 				swap(East)
 		harv.copy_general_process()
-def cacti_harvest():
+def cacti_harvest_copydrone():
 	while True:
 		flag_harv = True
 		harv.back()
@@ -24,30 +24,62 @@ def cacti_harvest():
 			harv.travel()
 		if flag_harv:
 			harvest()
-def cacti(b=harv.ever_false):
+
+def cacti_notsort_copydrone():
+	for i in range(get_world_size()):
+		while measure() != 9:
+			harvest()
+			plant(Entities.Cactus)
+			if num_items(Items.Pumpkin) <= get_cost(Entities.Cactus)[Items.Pumpkin]:
+				break
+		if num_items(Items.Pumpkin) <= get_cost(Entities.Cactus)[Items.Pumpkin]:
+				break
+		if get_pos_x() == get_world_size() - 1 and get_pos_y() == get_world_size() - 1:
+			do_a_flip()
+			harvest()
+		harv.copy_general_process()
+
+def cacti_multi(b=harv.ever_false):
 	if not b():
+		harv.back()
 		harv.init(harv.to_soil)
 		harv.back()
-		spawn_drone(cacti_harvest)
-		while True:
-			if b():
-				break
-			if spawn_drone(cacti_sort):
+		while not b():
+			if spawn_drone(cacti_notsort_copydrone):
 				move(East)
-#ここからsustain用
+
+def cacti_single(b=harv.ever_false):
+	if not b():
+		harv.back()
+		for i in range(get_world_size()*2):
+			if get_ground_type() != Grounds.Soil:
+				till()
+			harvest()
+			plant(Entities.Cactus)
+			harv.general_process()
+		while not b():
+			while measure() != 9:
+				harvest()
+				plant(Entities.Cactus)
+			if get_pos_x() == get_world_size() - 1 and get_pos_y() == get_world_size() - 1:
+				harvest()
+			harv.general_process()
+
 import sun
-import carrot
-#lambda式が使えない故
-def cacti_sus(b=harv.ever_false):
+import pumpkin
+def cacti_sup(b=harv.ever_false):
 	def a1():
-		return b() or num_items(Items.Carrot) <= 100 or num_items(Items.Power) <= 100
+		return b() or num_items(Items.Pumpkin) <= get_cost(Entities.Cactus)[Items.Pumpkin] or num_items(Items.Power) == 0
 	def a3():
-		return num_items(Items.Carrot) >= 1000000
+		return num_items(Items.Pumpkin) >= 1000*2**num_unlocked(Unlocks.Cactus)
 	while not b():
 		if not a1():
-			cacti(a1)
+			if num_unlocked(Unlocks.Megafarm) == 0:
+				cacti_single(a1)
+			else:
+				cacti_multi(a1)
 		if num_unlocked(Unlocks.Sunflowers) != 0:
 			sun.sun_sup()
 		if not a3():
-			carrot.carrot(a3)
+			pumpkin.pumpkin_sup(a3)
 		break

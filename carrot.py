@@ -44,7 +44,7 @@ import hay
 import sun
 def carrot_sup(b=harv.ever_false):
 	def a1():
-		return b() or num_items(Items.Power) == 0 or num_items(Items.Hay) <= get_cost(Items.Carrot)[Items.Hay]  or num_items(Items.Wood) <= get_cost(Items.Carrot)[Items.Wood]
+		return b() or num_items(Items.Power) == 0 or num_items(Items.Hay) <= get_cost(Entities.Carrot)[Items.Hay]  or num_items(Items.Wood) <= get_cost(Entities.Carrot)[Items.Wood]
 	def a2():
 		return num_items(Items.Hay) >= 1000*2**num_unlocked(Unlocks.Carrots)
 	def a3():

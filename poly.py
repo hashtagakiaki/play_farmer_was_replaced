@@ -25,7 +25,7 @@ def poly():
 harv.back()
 i = get_world_size()
 while i >= 0:
-	if spawn_drone(carrot.carrot_init):
+	if spawn_drone(carrot.carrot_init_copydrone):
 		move(East)
 		i -= 1
 harv.back()

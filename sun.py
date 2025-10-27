@@ -16,6 +16,7 @@ def sun_harvest_copydrone():
 
 def sun_multi(b):
 	if not b():
+		harv.back()
 		i = get_world_size()
 		while i >= 0:
 			if spawn_drone(sun_init_copydrone):
@@ -43,14 +44,15 @@ def sun_single(b=harv.ever_false):
 import carrot
 def sun_sup(b=harv.ever_false):
 	def a1():
-		return b() or num_items(Items.Carrot) <= get_cost(Items.Sunflower)[Items.Carrot] or num_items(Items.Power) >= (312*max_drones())
+		return b() or num_items(Items.Carrot) <= get_cost(Entities.Sunflower)[Items.Carrot] or num_items(Items.Power) >= (312*max_drones()) or num_items(Items.Power) == 0
 	def a2():
+		return b() or num_items(Items.Carrot) <= get_cost(Entities.Sunflower)[Items.Carrot] or num_items(Items.Power) >= (312*max_drones())
+	def a3():
 		return b() or num_items(Items.Carrot) >= 1000*2**num_unlocked(Unlocks.Carrots)
-	while not b():
-		if not a1():
-			if num_unlocked(Unlocks.Megafarm) == 0:
-				sun_single(a1)
-			else:
-				sun_multi(a1)
-		if not a2():
-			carrot.carrot_sup(a2)
+	while not a1():
+		if num_unlocked(Unlocks.Megafarm) == 0:
+			sun_single(a2)
+		else:
+			sun_multi(a2)
+		if not a3():
+			carrot.carrot_sup(a3)

@@ -2,6 +2,6 @@ import wood
 import hay
 import carrot
 import cacti
-import maze
-while True:
+import pumpkin
+cacti.cacti_sup()
 	
