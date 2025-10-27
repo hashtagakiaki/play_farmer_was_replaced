@@ -1,27 +1,4 @@
-def harvest_bush(b,l):
-	flag = 0
-	for i in l:
-		if i == b:
-			flag = 1
-			break
-	if flag == 1:
-		if can_harvest():
-			harvest()
-		if get_ground_type() != Grounds.Grassland: 
-			till()
-def harvest_soil(a,b,l):
-	flag = 0
-	for i in l:
-		if i == b:
-			flag = 1
-			break
-	if flag == 1:
-		if can_harvest():
-			harvest()
-		if get_ground_type() != Grounds.Soil: 
-			till()
-		plant(a)
-		
+	
 #移動
 def travel():
 	if get_pos_y() != get_world_size()-1:
@@ -29,13 +6,15 @@ def travel():
 	else:
 		move(North)
 		move(East)
+#逆向き移動	
 def travel_rev():
 	if get_pos_y() != 0:
 		move(South)
 	else:
 		move(South)
 		move(West)
-#移動時の他の処理はいったやつ
+
+#移動時水まきつき
 def general_process():
 	if get_water() < 0.5:
 			use_item(Items.Water)
@@ -44,11 +23,13 @@ def general_process_rev():
 	if get_water() < 0.5:
 			use_item(Items.Water)
 	travel_rev()
+
 #copy_drone用のgeneral
 def copy_general_process():
 	if get_water() < 0.6:
 			use_item(Items.Water)
 	move(North)
+
 #初期地点に戻る
 def back():
 	for i in range(get_pos_y()):

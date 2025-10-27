@@ -2,5 +2,6 @@ import wood
 import hay
 import carrot
 import cacti
+import maze
 while True:
-	cacti.cacti_sus()
+	

@@ -64,7 +64,8 @@ def pumpkin_sup(b=harv.ever_false):
 	while not b():
 		if not a1():
 			pumpkin(a1)
-		sun.sun_sup(b)
+		if num_unlocked(Unlocks.Sunflowers) != 0:
+			sun.sun_sup(b)
 		if not a2():
 			carrot.carrot_sup(a2)
 		break

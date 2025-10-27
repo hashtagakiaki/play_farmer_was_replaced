@@ -46,7 +46,8 @@ def cacti_sus(b=harv.ever_false):
 	while not b():
 		if not a1():
 			cacti(a1)
-		sun.sun_sup()
+		if num_unlocked(Unlocks.Sunflowers) != 0:
+			sun.sun_sup()
 		if not a3():
 			carrot.carrot(a3)
 		break

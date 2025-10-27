@@ -60,7 +60,8 @@ def weired_sup(b=harv.ever_false):
 	while not b():
 		if not a1():
 			weired(a1)
-		sun.sun_sup()
+		if num_unlocked(Unlocks.Sunflowers) != 0:
+			sun.sun_sup()
 		if not a2():
 			hay.hay_sup(a2)
 		if not a3():
