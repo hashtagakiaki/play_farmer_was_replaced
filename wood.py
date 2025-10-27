@@ -18,12 +18,8 @@ def wood_harvest_copydrone():
 
 def wood_multi(b):
 	if not b():
+		harv.init_multi(wood_init_copydrone)
 		harv.back()
-		i = get_world_size()
-		while i >= 0:
-			if spawn_drone(wood_init_copydrone):
-				move(East)
-				i -= 1
 		while not b():
 			if spawn_drone(wood_harvest_copydrone):
 				move(East)
@@ -47,7 +43,10 @@ def wood_single(b=harv.ever_false):
 import sun
 def wood_sup(b=harv.ever_false):
 	def a1():
-		return b() or num_items(Items.Power) == 0
+		if num_unlocked(Unlocks.Sunflowers) == 0:
+			return b()
+		else:
+			return b() or num_items(Items.Power) == 0
 	while not b():
 		if not a1():
 			if num_unlocked(Unlocks.Megafarm) == 0:

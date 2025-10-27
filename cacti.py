@@ -1,13 +1,19 @@
+import sun
+import pumpkin
 import harv
+
+
 def cacti_sort_copydrone():
 	for i in range(get_world_size()):
 		if get_entity_type() != Entities.Cactus:
 			plant(Entities.Cactus)
 		if measure(North) != None and measure() != None and measure() > measure(North) and get_pos_y() != get_world_size() - 1:
-				swap(North)
+			swap(North)
 		if measure(East) != None and measure() != None and measure() > measure(East) and get_pos_x() != get_world_size() - 1:
-				swap(East)
+			swap(East)
 		harv.copy_general_process()
+
+
 def cacti_harvest_copydrone():
 	while True:
 		flag_harv = True
@@ -25,6 +31,7 @@ def cacti_harvest_copydrone():
 		if flag_harv:
 			harvest()
 
+
 def cacti_notsort_copydrone():
 	for i in range(get_world_size()):
 		while measure() != 9:
@@ -33,20 +40,28 @@ def cacti_notsort_copydrone():
 			if num_items(Items.Pumpkin) <= get_cost(Entities.Cactus)[Items.Pumpkin]:
 				break
 		if num_items(Items.Pumpkin) <= get_cost(Entities.Cactus)[Items.Pumpkin]:
-				break
+			break
 		if get_pos_x() == get_world_size() - 1 and get_pos_y() == get_world_size() - 1:
 			do_a_flip()
 			harvest()
 		harv.copy_general_process()
 
+
 def cacti_multi(b=harv.ever_false):
 	if not b():
-		harv.back()
-		harv.init(harv.to_soil)
+		harv.init_multi(harv.to_soil_copydrone)
 		harv.back()
 		while not b():
-			if spawn_drone(cacti_notsort_copydrone):
-				move(East)
+			i = get_world_size()
+			while i >= 0:
+				if spawn_drone(cacti_notsort_copydrone):
+					move(East)
+					i -= 1
+			harv.back()
+			while measure() != None:
+				do_a_flip()
+			harvest()
+
 
 def cacti_single(b=harv.ever_false):
 	if not b():
@@ -65,11 +80,14 @@ def cacti_single(b=harv.ever_false):
 				harvest()
 			harv.general_process()
 
-import sun
-import pumpkin
+
 def cacti_sup(b=harv.ever_false):
 	def a1():
-		return b() or num_items(Items.Pumpkin) <= get_cost(Entities.Cactus)[Items.Pumpkin] or num_items(Items.Power) == 0
+		if num_unlocked(Unlocks.Sunflowers) == 0:
+			return b() or num_items(Items.Pumpkin) <= get_cost(Entities.Cactus)[Items.Pumpkin]
+		else:
+			return b() or num_items(Items.Pumpkin) <= get_cost(Entities.Cactus)[Items.Pumpkin] or num_items(Items.Power) == 0
+
 	def a3():
 		return num_items(Items.Pumpkin) >= 1000*2**num_unlocked(Unlocks.Cactus)
 	while not b():

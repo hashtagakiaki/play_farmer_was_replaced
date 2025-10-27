@@ -1,4 +1,8 @@
+import carrot
+import sun
 import harv
+
+
 def pumpkin_init_copydrone():
 	for i in range(get_world_size()):
 		if get_ground_type() != Grounds.Soil:
@@ -6,11 +10,13 @@ def pumpkin_init_copydrone():
 		harvest()
 		harv.copy_general_process()
 
+
 def pumpkin_plant1_copydrone():
 	for i in range(get_world_size()):
 		if not can_harvest():
 			plant(Entities.Pumpkin)
 		harv.copy_general_process()
+
 
 def pumpkin_plant2_copydrone():
 	i = get_world_size()
@@ -22,6 +28,7 @@ def pumpkin_plant2_copydrone():
 			i -= 1
 			if get_pos_x() == get_world_size() - 1 and get_pos_y() == get_world_size() - 1:
 				harvest()
+
 
 def pumpkin_multi(b=harv.ever_false):
 	if not b():
@@ -40,6 +47,7 @@ def pumpkin_multi(b=harv.ever_false):
 					move(East)
 					i -= 1
 
+
 def pumpkin_single(b=harv.ever_false):
 	if not b():
 		harv.back()
@@ -55,11 +63,14 @@ def pumpkin_single(b=harv.ever_false):
 				harvest()
 			harv.general_process()
 
-import carrot
-import sun
+
 def pumpkin_sup(b=harv.ever_false):
 	def a1():
-		return b() or num_items(Items.Power) == 0 or num_items(Items.Carrot) <= get_cost(Entities.Pumpkin)[Items.Carrot] 
+		if num_unlocked(Unlocks.Sunflowers) == 0:
+			return b() or num_items(Items.Carrot) <= get_cost(Entities.Pumpkin)[Items.Carrot]
+		else:
+			return b() or num_items(Items.Power) == 0 or num_items(Items.Carrot) <= get_cost(Entities.Pumpkin)[Items.Carrot]
+
 	def a2():
 		return num_items(Items.Carrot) >= 1000*2**num_unlocked(Unlocks.Pumpkins)
 	while not b():
@@ -72,6 +83,3 @@ def pumpkin_sup(b=harv.ever_false):
 			sun.sun_sup(b)
 		if not a2():
 			carrot.carrot_sup(a2)
-			
-	
-	

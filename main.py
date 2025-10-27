@@ -3,5 +3,6 @@ import hay
 import carrot
 import cacti
 import pumpkin
-cacti.cacti_sup()
-	
+import dino
+import unlocking
+unlocking.unlocking(Unlocks.Top_Hat)

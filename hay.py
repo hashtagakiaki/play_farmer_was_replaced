@@ -1,23 +1,22 @@
 import sun
 import harv
 
+
 def hay_harvest_copydrone():
 	for i in range(get_world_size()):
 		if can_harvest():
 			harvest()
 		move(North)
 
+
 def hay_multi(b=harv.ever_false):
 	if not b():
+		harv.init_multi(harv.to_grass_copydrone)
 		harv.back()
-		i = get_world_size()
-		while i >= 0:
-			if spawn_drone(harv.to_grass):
-				move(East)
-				i -= 1
 		while not b():
 			if spawn_drone(hay_harvest_copydrone):
 				move(East)
+
 
 def hay_single(b=harv.ever_false):
 	if not b():
@@ -30,6 +29,7 @@ def hay_single(b=harv.ever_false):
 			if can_harvest():
 				harvest()
 			harv.general_process()
+
 
 def hay_sup(b=harv.ever_false):
 	def a1():
