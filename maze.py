@@ -1,21 +1,26 @@
+import maze1
 import sun
 import weired
 import harv
+import maze2
 
 
-def left_hand():
+def left_hand(b=harv.ever_false):
 	moved = South
-	while get_entity_type() != Entities.Treasure:
+	while get_entity_type() != Entities.Treasure and not b():
 		if harv.move(harv.turn_right(moved, 3)) == False:
 			if move(moved) == False:
 				moved = harv.turn_right(moved, 1)
 				move(moved)
 		else:
 			moved = harv.turn_right(moved, 3)
-	harvest()
+	if get_entity_type() == Entities.Treasure:
+		harvest()
 
 
 def maze_multi_main(b=harv.ever_false):
+	def left_hand_wrapper():
+		return left_hand(b)
 	if not b():
 		moved = South
 		while get_entity_type() != Entities.Treasure and measure() != None and not b():
@@ -27,7 +32,8 @@ def maze_multi_main(b=harv.ever_false):
 				moved = harv.turn_right(moved, 1)
 			if random() < 0.1:
 				spawn_drone(left_hand)
-		harvest()
+		if get_entity_type() == Entities.Treasure:
+			harvest()
 
 
 def maze_multi(b=harv.ever_false):
@@ -37,6 +43,7 @@ def maze_multi(b=harv.ever_false):
 		do_a_flip()
 		do_a_flip()
 		while not b():
+			plant(Entities.Bush)
 			n_substance = get_world_size() * 2**(num_unlocked(Unlocks.Mazes) - 1)
 			use_item(Items.Weird_Substance, n_substance)
 			maze_multi_main()
@@ -50,14 +57,18 @@ def maze_single(b=harv.ever_false):
 				till()
 			harv.general_process()
 		moved = South
-		while get_entity_type() != Entities.Treasure and measure() != None and not b():
-			if harv.move(harv.turn_right(moved, 1)) == False:
-				if move(moved) == False:
-					moved = harv.turn_right(moved, 3)
-					move(moved)
-			else:
-				moved = harv.turn_right(moved, 1)
-		harvest()
+		while not b():
+			plant(Entities.Bush)
+			n_substance = get_world_size() * 2**(num_unlocked(Unlocks.Mazes) - 1)
+			use_item(Items.Weird_Substance, n_substance)
+			while get_entity_type() != Entities.Treasure and measure() != None and not b():
+				if harv.move(harv.turn_right(moved, 1)) == False:
+					if move(moved) == False:
+						moved = harv.turn_right(moved, 3)
+						move(moved)
+				else:
+					moved = harv.turn_right(moved, 1)
+			harvest()
 
 
 def maze_sup(b=harv.ever_false):
@@ -68,13 +79,15 @@ def maze_sup(b=harv.ever_false):
 			return b() or num_items(Items.Power) == 0 or num_items(Items.Weird_Substance) <= get_world_size()*2**(num_unlocked(Unlocks.Mazes) - 1)
 
 	def a2():
-		return num_items(Items.Weird_Substance) >= (get_world_size()*2**(num_unlocked(Unlocks.Mazes)))*20
+		return num_items(Items.Weird_Substance) >= (get_world_size()*2**(num_unlocked(Unlocks.Mazes)))*600
+
 	while not b():
 		if not a1():
 			if num_unlocked(Unlocks.Megafarm) == 0:
 				maze_single(a1)
 			else:
-				maze_multi(a1)
+				maze2.maze_multi_fill(a1)
+				set_world_size(32)
 		if num_unlocked(Unlocks.Sunflowers) != 0:
 			sun.sun_sup()
 		if not a2():
