@@ -31,13 +31,14 @@ def hay_single(b=harv.ever_false):
 			harv.general_process()
 
 
-def hay_sup(b=harv.ever_false):
+def hay_sup(b=harv.ever_false, limit=-1):
 	def a1():
 		if num_unlocked(Unlocks.Sunflowers) == 0:
-			return b()
+			return b() or (num_items(Items.Hay) >= limit and limit != -1)
 		else:
-			return b() or num_items(Items.Power) == 0
-	while not b():
+			return b() or num_items(Items.Power) == 0 or (num_items(Items.Hay) >= limit and limit != -1)
+
+	while not b() and (num_items(Items.Hay) <= limit or limit != -1):
 		if not a1():
 			if num_unlocked(Unlocks.Megafarm) == 0:
 				hay_single(b)

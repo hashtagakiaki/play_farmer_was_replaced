@@ -46,19 +46,19 @@ def carrot_single(b=harv.ever_false):
 			harv.general_process()
 
 
-def carrot_sup(b=harv.ever_false):
+def carrot_sup(b=harv.ever_false, limit=-1):
 	def a1():
 		if num_unlocked(Unlocks.Sunflowers) == 0:
-			return b() or num_items(Items.Hay) <= get_cost(Entities.Carrot)[Items.Hay] or num_items(Items.Wood) <= get_cost(Entities.Carrot)[Items.Wood]
+			return b() or num_items(Items.Hay) <= get_cost(Entities.Carrot)[Items.Hay] or num_items(Items.Wood) <= get_cost(Entities.Carrot)[Items.Wood] or (num_items(Items.Carrot) >= limit and limit != -1)
 		else:
-			return b() or num_items(Items.Power) == 0 or num_items(Items.Hay) <= get_cost(Entities.Carrot)[Items.Hay] or num_items(Items.Wood) <= get_cost(Entities.Carrot)[Items.Wood]
+			return b() or num_items(Items.Power) == 0 or num_items(Items.Hay) <= get_cost(Entities.Carrot)[Items.Hay] or num_items(Items.Wood) <= get_cost(Entities.Carrot)[Items.Wood] or (num_items(Items.Carrot) >= limit and limit != -1)
 
 	def a2():
 		return num_items(Items.Hay) >= 1000*2**num_unlocked(Unlocks.Carrots)
 
 	def a3():
 		return num_items(Items.Wood) >= 1000*2**num_unlocked(Unlocks.Carrots)
-	while not b():
+	while not b() and (num_items(Items.Carrot) <= limit or limit != -1):
 		if not a1():
 			if num_unlocked(Unlocks.Megafarm) == 0:
 				carrot_single(a1)
@@ -66,8 +66,10 @@ def carrot_sup(b=harv.ever_false):
 				carrot_multi(a1)
 		if num_unlocked(Unlocks.Sunflowers) != 0:
 			sun.sun_sup(b)
-		if not a2():
-			hay.hay_sup(a2)
-		if not a3():
-			wood.wood_sup(a3)
+		c = (limit//2**(num_unlocked(Unlocks.Carrots)-1)+1)*get_cost(Entities.Carrot)[Items.Hay]
+		if not b() and num_items(Items.Hay) <= c or limit == -1:
+			hay.hay_sup(b,c)
+		d = (limit//2**(num_unlocked(Unlocks.Carrots)-1)+1)*get_cost(Entities.Carrot)[Items.Wood]
+		if not b() and num_items(Items.Wood) <= d or limit == -1:
+			wood.wood_sup(b,d)
 		break

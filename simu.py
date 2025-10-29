@@ -1,5 +1,5 @@
 unlocks = Unlocks
-items = {Items.Weird_Substance : 1000000000, Items.Power: 1000000000}
+items = {Items.Pumpkin : 1000000000, Items.Power: 1000000000}
 globals = {}
 seed = -1
 speedup = 60

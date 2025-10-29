@@ -75,15 +75,15 @@ def dino(b=harv.ever_false):
 						break
 
 
-def dino_sup(b=harv.ever_false):
+def dino_sup(b=harv.ever_false,limit =-1):
 	def a1():
 		if num_unlocked(Unlocks.Sunflowers) == 0:
-			return b() or num_items(Items.Cactus) <= get_cost(Entities.Apple)[Items.Cactus]
+			return b() or num_items(Items.Cactus) <= get_cost(Entities.Apple)[Items.Cactus] or (num_items(Items.Bone) >= limit and limit != -1)
 		else:
-			return b() or num_items(Items.Power) == 0 or num_items(Items.Cactus) <= get_cost(Entities.Apple)[Items.Cactus]
-	while not b():
+			return b() or num_items(Items.Power) == 0 or num_items(Items.Cactus) <= get_cost(Entities.Apple)[Items.Cactus] or (num_items(Items.Bone) >= limit and limit != -1)
+	while not b() and (num_items(Items.Bone) <= limit or limit != -1):
 		if not a1():
-			dino(b)
+			dino(a1)
 			change_hat(Hats.Straw_Hat)
 		if num_unlocked(Unlocks.Sunflowers) != 0:
 			sun.sun_sup(b)

@@ -20,13 +20,13 @@ def travel_rev():
 
 
 def general_process():
-	if get_water() < 0.5:
+	if get_water() < 0.5 and num_items(Items.Water) > 1:
 		use_item(Items.Water)
 	travel()
 
 
 def general_process_rev():
-	if get_water() < 0.5:
+	if get_water() < 0.5 and num_items(Items.Water) > 1:
 		use_item(Items.Water)
 	travel_rev()
 
@@ -34,7 +34,7 @@ def general_process_rev():
 
 
 def copy_general_process():
-	if get_water() < 0.6:
+	if get_water() < 0.6 and num_items(Items.Water) > 1:
 		use_item(Items.Water)
 	move(North)
 

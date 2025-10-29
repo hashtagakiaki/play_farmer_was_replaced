@@ -62,7 +62,7 @@ def cacti_multi(b=harv.ever_false):
 				do_a_flip()
 			harvest()
 
-
+			
 def cacti_single(b=harv.ever_false):
 	if not b():
 		harv.back()
@@ -79,18 +79,16 @@ def cacti_single(b=harv.ever_false):
 			if get_pos_x() == get_world_size() - 1 and get_pos_y() == get_world_size() - 1:
 				harvest()
 			harv.general_process()
-
-
-def cacti_sup(b=harv.ever_false):
+			
+			
+def cacti_sup(b=harv.ever_false, limit=-1):
 	def a1():
 		if num_unlocked(Unlocks.Sunflowers) == 0:
-			return b() or num_items(Items.Pumpkin) <= get_cost(Entities.Cactus)[Items.Pumpkin]
+			return b() or num_items(Items.Pumpkin) <= get_cost(Entities.Cactus)[Items.Pumpkin] or (num_items(Items.Cactus) >= limit and limit != -1)
 		else:
-			return b() or num_items(Items.Pumpkin) <= get_cost(Entities.Cactus)[Items.Pumpkin] or num_items(Items.Power) == 0
+			return b() or num_items(Items.Pumpkin) <= get_cost(Entities.Cactus)[Items.Pumpkin] or num_items(Items.Power) == 0 or (num_items(Items.Cactus) >= limit and limit != -1)
 
-	def a3():
-		return num_items(Items.Pumpkin) >= 1000*2**num_unlocked(Unlocks.Cactus)
-	while not b():
+	while not b() and (num_items(Items.Cactus) <= limit or limit != -1):
 		if not a1():
 			if num_unlocked(Unlocks.Megafarm) == 0:
 				cacti_single(a1)
@@ -98,6 +96,6 @@ def cacti_sup(b=harv.ever_false):
 				cacti_multi(a1)
 		if num_unlocked(Unlocks.Sunflowers) != 0:
 			sun.sun_sup()
-		if not a3():
-			pumpkin.pumpkin_sup(a3)
-		break
+		c = (limit//2**(num_unlocked(Unlocks.Cactus)-1)+1)*get_cost(Entities.Cactus)[Items.Pumpkin]
+		if not b() and num_items(Items.Pumpkin) <= c or limit == -1:
+			pumpkin.pumpkin_sup(b,c)
