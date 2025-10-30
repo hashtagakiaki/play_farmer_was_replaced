@@ -2,8 +2,8 @@ import harv
 import sun
 
 
-def dino(b=harv.ever_false):
-	if not b():
+def dino(stop2=harv.ever_false):
+	if not stop2():
 		change_hat(Hats.Straw_Hat)
 		harv.back()
 		if num_unlocked(Unlocks.Megafarm) == 0:
@@ -15,11 +15,11 @@ def dino(b=harv.ever_false):
 		else:
 			harv.init_multi(harv.to_soil_copydrone)
 
-		while not b():
+		while not stop2():
 			change_hat(Hats.Straw_Hat)
 			harv.back()
 			change_hat(Hats.Dinosaur_Hat)
-			while not b():
+			while not stop2():
 				for _ in range(get_world_size() - 1):
 					if not move(North):
 						break
@@ -75,15 +75,23 @@ def dino(b=harv.ever_false):
 						break
 
 
-def dino_sup(b=harv.ever_false,limit =-1):
-	def a1():
+def dino_sup(stop=harv.ever_false,limit =-1):
+	def stop2():
+		return stop() or (num_items(Items.Bone) >= limit and limit != -1)
+	def stop3():
 		if num_unlocked(Unlocks.Sunflowers) == 0:
-			return b() or num_items(Items.Cactus) <= get_cost(Entities.Apple)[Items.Cactus] or (num_items(Items.Bone) >= limit and limit != -1)
+			return stop2() or num_items(Items.Cactus) <= get_cost(Entities.Apple)[Items.Cactus]
 		else:
-			return b() or num_items(Items.Power) == 0 or num_items(Items.Cactus) <= get_cost(Entities.Apple)[Items.Cactus] or (num_items(Items.Bone) >= limit and limit != -1)
-	while not b() and (num_items(Items.Bone) <= limit or limit != -1):
-		if not a1():
-			dino(a1)
+			return stop2() or num_items(Items.Power) == 0 or num_items(Items.Cactus) <= get_cost(Entities.Apple)[Items.Cactus]
+	while not stop2():
+		if not stop3():
+			dino(stop3)
 			change_hat(Hats.Straw_Hat)
 		if num_unlocked(Unlocks.Sunflowers) != 0:
-			sun.sun_sup(b)
+			sun.sun_sup(stop2)
+		limit1 = (limit//2**(num_unlocked(Unlocks.Cactus)-1)+1)*get_cost(Entities.Apple)[Items.Cactus]
+		limit2 =  get_cost(Entities.Apple)[Items.Cactus]*get_world_size()**2*10
+		if not stop2() and limit != -1 and num_items(Items.Cactus) <= limit1:
+			harv.cacti_sup(stop2,limit1)
+		elif not stop2() and limit == -1 and num_items(Items.Cactus) <= limit2:
+			harv.cacti_sup(stop2,limit2)

@@ -5,4 +5,5 @@ import cacti
 import pumpkin
 import dino
 import auto_unlock
-cacti.cacti_sup()
+import sun
+sun.sun_sup()

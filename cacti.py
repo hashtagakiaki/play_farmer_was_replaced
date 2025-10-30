@@ -47,11 +47,11 @@ def cacti_notsort_copydrone():
 		harv.copy_general_process()
 
 
-def cacti_multi(b=harv.ever_false):
-	if not b():
+def cacti_multi(stop1=harv.ever_false):
+	if not stop1():
 		harv.init_multi(harv.to_soil_copydrone)
 		harv.back()
-		while not b():
+		while not stop1():
 			i = get_world_size()
 			while i >= 0:
 				if spawn_drone(cacti_notsort_copydrone):
@@ -63,16 +63,16 @@ def cacti_multi(b=harv.ever_false):
 			harvest()
 
 			
-def cacti_single(b=harv.ever_false):
-	if not b():
+def cacti_single(stop1=harv.ever_false):
+	if not stop1():
 		harv.back()
-		for i in range(get_world_size()*2):
+		for _ in range(get_world_size()**2):
 			if get_ground_type() != Grounds.Soil:
 				till()
 			harvest()
 			plant(Entities.Cactus)
 			harv.general_process()
-		while not b():
+		while not stop1():
 			while measure() != 9:
 				harvest()
 				plant(Entities.Cactus)
@@ -81,21 +81,27 @@ def cacti_single(b=harv.ever_false):
 			harv.general_process()
 			
 			
-def cacti_sup(b=harv.ever_false, limit=-1):
-	def a1():
+def cacti_sup(stop=harv.ever_false, limit=-1):
+	def stop1():
+		return stop() or (num_items(Items.Cactus) >= limit and limit != -1)
+	def stop2():
 		if num_unlocked(Unlocks.Sunflowers) == 0:
-			return b() or num_items(Items.Pumpkin) <= get_cost(Entities.Cactus)[Items.Pumpkin] or (num_items(Items.Cactus) >= limit and limit != -1)
+			return stop1() or num_items(Items.Pumpkin) <= get_cost(Entities.Cactus)[Items.Pumpkin]
 		else:
-			return b() or num_items(Items.Pumpkin) <= get_cost(Entities.Cactus)[Items.Pumpkin] or num_items(Items.Power) == 0 or (num_items(Items.Cactus) >= limit and limit != -1)
+			return stop1() or num_items(Items.Pumpkin) <= get_cost(Entities.Cactus)[Items.Pumpkin] or num_items(Items.Power) == 0
 
-	while not b() and (num_items(Items.Cactus) <= limit or limit != -1):
-		if not a1():
+	while not stop1():
+		if not stop2():
 			if num_unlocked(Unlocks.Megafarm) == 0:
-				cacti_single(a1)
+				cacti_single(stop2)
 			else:
-				cacti_multi(a1)
+				cacti_multi(stop2)
 		if num_unlocked(Unlocks.Sunflowers) != 0:
-			sun.sun_sup()
-		c = (limit//2**(num_unlocked(Unlocks.Cactus)-1)+1)*get_cost(Entities.Cactus)[Items.Pumpkin]
-		if not b() and num_items(Items.Pumpkin) <= c or limit == -1:
-			pumpkin.pumpkin_sup(b,c)
+			sun.sun_sup(stop1)
+		limit1 = (limit//2**(num_unlocked(Unlocks.Cactus)-1)+1)*get_cost(Entities.Cactus)[Items.Pumpkin]
+		limit2 =  get_cost(Entities.Cactus)[Items.Pumpkin]*get_world_size()**2*10
+		if not stop1() and limit != -1 and num_items(Items.Pumpkin) <= limit1:
+			pumpkin.pumpkin_sup(stop1,limit1)
+		elif not stop1() and limit == -1 and num_items(Items.Pumpkin) <= limit2:
+			pumpkin.pumpkin_sup(stop1,limit2)
+

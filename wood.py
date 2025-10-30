@@ -21,60 +21,62 @@ def tree_harvest_copydrone():
 		harv.copy_general_process()
 
 
-def tree_multi(b):
-	if not b():
+def tree_multi(stop2):
+	if not stop2():
 		harv.init_multi(tree_init_copydrone)
 		harv.back()
-		while not b():
+		while not stop2():
 			if spawn_drone(tree_harvest_copydrone):
 				move(East)
 
 
-def tree_single(b=harv.ever_false):
-	if not b():
+def tree_single(stop2=harv.ever_false):
+	if not stop2():
 		harv.back()
-		for i in range(get_world_size()*2):
+		for _ in range(get_world_size()**2):
 			if get_ground_type() != Grounds.Soil:
 				till()
 			harvest()
 			if (get_pos_x() + get_pos_y()) % 2 == 0:
 				plant(Entities.Tree)
 			harv.general_process()
-		while not b():
+		while not stop2():
 			if can_harvest():
 				harvest()
 				plant(Entities.Tree)
 			harv.general_process()
 
 
-def bush_single(b=harv.ever_false):
-	if not b():
+def bush_single(stop2=harv.ever_false):
+	if not stop2():
 		harv.back()
-		for i in range(get_world_size()*2):
+		for _ in range(get_world_size()**2):
 			if get_ground_type() != Grounds.Soil:
 				till()
 				plant(Entities.Bush)
 			harv.general_process()
-		while not b():
+		while not stop2():
 			if can_harvest():
 				harvest()
 				plant(Entities.Bush)
 			harv.general_process()
 
 
-def wood_sup(b=harv.ever_false):
-	def a1():
+def wood_sup(stop=harv.ever_false,limit=-1):
+	def stop2():
+		return stop() or (num_items(Items.Wood) >= limit and limit != -1)
+	def stop3():
 		if num_unlocked(Unlocks.Sunflowers) == 0:
-			return b()
+			return stop2()
 		else:
-			return b() or num_items(Items.Power) == 0
-	while not b():
-		if not a1():
+			return stop2() or num_items(Items.Power) == 0
+	while not stop2():
+		if not stop3():
 			if num_unlocked(Unlocks.Megafarm) != 0:
-				tree_multi(a1)
+				tree_multi(stop3)
 			elif num_unlocked(Unlocks.Trees) == 0:
-				bush_single(a1)
+				bush_single(stop3)
 			else:
-				tree_single(a1)
+				tree_single(stop3)
 		if num_unlocked(Unlocks.Sunflowers) != 0:
-			sun.sun_sup()
+			sun.sun_sup(stop2)

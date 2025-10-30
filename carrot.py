@@ -22,54 +22,57 @@ def carrot_harvest_copydrone():
 		harv.copy_general_process()
 
 
-def carrot_multi(b=harv.ever_false):
-	if not b():
+def carrot_multi(stop2=harv.ever_false):
+	if not stop2():
 		harv.init_multi(carrot_init_copydrone)
 		harv.back()
-		while not b():
+		while not stop2():
 			if spawn_drone(carrot_harvest_copydrone):
 				move(East)
 
 
-def carrot_single(b=harv.ever_false):
-	if not b():
+def carrot_single(stop2=harv.ever_false):
+	if not stop2():
 		harv.back()
-		for i in range(get_world_size()*2):
+		for _ in range(get_world_size()**2):
 			if get_ground_type() != Grounds.Soil:
 				till()
 			plant(Entities.Carrot)
 			harv.general_process()
-		while not b():
+		while not stop2():
 			if can_harvest():
 				harvest()
 				plant(Entities.Carrot)
 			harv.general_process()
 
 
-def carrot_sup(b=harv.ever_false, limit=-1):
-	def a1():
+def carrot_sup(stop=harv.ever_false, limit=-1):
+	def stop2():
+		return stop() or (num_items(Items.Carrot) >= limit and limit != -1)
+	def stop3():
 		if num_unlocked(Unlocks.Sunflowers) == 0:
-			return b() or num_items(Items.Hay) <= get_cost(Entities.Carrot)[Items.Hay] or num_items(Items.Wood) <= get_cost(Entities.Carrot)[Items.Wood] or (num_items(Items.Carrot) >= limit and limit != -1)
+			return stop2() or num_items(Items.Hay) <= get_cost(Entities.Carrot)[Items.Hay] or num_items(Items.Wood) <= get_cost(Entities.Carrot)[Items.Wood]
 		else:
-			return b() or num_items(Items.Power) == 0 or num_items(Items.Hay) <= get_cost(Entities.Carrot)[Items.Hay] or num_items(Items.Wood) <= get_cost(Entities.Carrot)[Items.Wood] or (num_items(Items.Carrot) >= limit and limit != -1)
+			return stop2() or num_items(Items.Power) == 0 or num_items(Items.Hay) <= get_cost(Entities.Carrot)[Items.Hay] or num_items(Items.Wood) <= get_cost(Entities.Carrot)[Items.Wood]
 
-	def a2():
-		return num_items(Items.Hay) >= 1000*2**num_unlocked(Unlocks.Carrots)
-
-	def a3():
-		return num_items(Items.Wood) >= 1000*2**num_unlocked(Unlocks.Carrots)
-	while not b() and (num_items(Items.Carrot) <= limit or limit != -1):
-		if not a1():
+	while not stop2():
+		if not stop3():
 			if num_unlocked(Unlocks.Megafarm) == 0:
-				carrot_single(a1)
+				carrot_single(stop3)
 			else:
-				carrot_multi(a1)
+				carrot_multi(stop3)
 		if num_unlocked(Unlocks.Sunflowers) != 0:
-			sun.sun_sup(b)
-		c = (limit//2**(num_unlocked(Unlocks.Carrots)-1)+1)*get_cost(Entities.Carrot)[Items.Hay]
-		if not b() and num_items(Items.Hay) <= c or limit == -1:
-			hay.hay_sup(b,c)
-		d = (limit//2**(num_unlocked(Unlocks.Carrots)-1)+1)*get_cost(Entities.Carrot)[Items.Wood]
-		if not b() and num_items(Items.Wood) <= d or limit == -1:
-			wood.wood_sup(b,d)
-		break
+			sun.sun_sup()
+		limit1 = (limit//2**(num_unlocked(Unlocks.Carrots)-1)+1)*get_cost(Entities.Carrot)[Items.Hay]
+		limit2 =  get_cost(Entities.Carrot)[Items.Hay]*get_world_size()**2*10
+		if not stop2() and limit != -1 and num_items(Items.Hay) <= limit1:
+			hay.hay_sup(stop2,limit1)
+		elif not stop2() and limit == -1 and num_items(Items.Hay) <= limit2:
+			hay.hay_sup(stop2,limit2)
+		limit3 = (limit//2**(num_unlocked(Unlocks.Carrots)-1)+1)*get_cost(Entities.Carrot)[Items.Wood]
+		limit4 =  get_cost(Entities.Carrot)[Items.Wood]*get_world_size()**2*10
+		
+		if not stop2() and limit != -1 and num_items(Items.Wood) <= limit3:
+			wood.wood_sup(stop2,limit3)
+		elif not stop2() and limit == -1 and num_items(Items.Wood) <= limit4:
+			wood.wood_sup(stop2,limit4)

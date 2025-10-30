@@ -20,24 +20,24 @@ def sun_harvest_copydrone():
 		harv.copy_general_process()
 
 
-def sun_multi(b):
-	if not b():
+def sun_multi(stop2):
+	if not stop2():
 		harv.init_multi(sun_init_copydrone)
 		harv.back()
-		while not b():
+		while not stop2():
 			if spawn_drone(sun_harvest_copydrone):
 				move(East)
 
 
-def sun_single(b=harv.ever_false):
-	if not b():
+def sun_single(stop2=harv.ever_false):
+	if not stop2():
 		harv.back()
 		for i in range(get_world_size()*2):
 			if get_ground_type() != Grounds.Soil:
 				till()
 			plant(Entities.Sunflower)
 			harv.general_process()
-		while not b():
+		while not stop2():
 			if can_harvest():
 				harvest()
 				plant(Entities.Sunflower)
@@ -47,19 +47,21 @@ def sun_single(b=harv.ever_false):
 # ここからsustain
 
 
-def sun_sup(b=harv.ever_false):
-	def a1():
-		return b() or num_items(Items.Carrot) <= get_cost(Entities.Sunflower)[Items.Carrot] or num_items(Items.Power) >= (312*max_drones()) or num_items(Items.Power) != 0
+def sun_sup(stop=harv.ever_false, limit=-1):
+	def stop2():
+		return stop() or (num_items(Items.Power) >= limit and limit != -1)
 
-	def a2():
-		return b() or num_items(Items.Carrot) <= get_cost(Entities.Sunflower)[Items.Carrot] or num_items(Items.Power) >= (312*max_drones())
+	def stop3():
+		return stop2() or num_items(Items.Carrot) <= get_cost(Entities.Sunflower)[Items.Carrot] or num_items(Items.Power) >= (312*max_drones()) or num_items(Items.Power) != 0
 
-	def a3():
-		return b() or num_items(Items.Carrot) >= 1000*2**num_unlocked(Unlocks.Carrots)
-	while not a1():
+	def stop4():
+		return stop2() or num_items(Items.Carrot) <= get_cost(Entities.Sunflower)[Items.Carrot] or num_items(Items.Power) >= (312*max_drones())
+
+	while not stop3():
 		if num_unlocked(Unlocks.Megafarm) == 0:
-			sun_single(a2)
+			sun_single(stop4)
 		else:
-			sun_multi(a2)
-		if not a3():
-			carrot.carrot_sup(a3)
+			sun_multi(stop4)
+		limit1 = max(312*max_drones(),limit)*get_cost(Entities.Sunflower)[Items.Carrot]
+		if not stop2() and limit != -1 and num_items(Items.Carrot) <= limit1:
+			carrot.carrot_sup(stop2,limit1)
